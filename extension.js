@@ -26,14 +26,14 @@ const DEFAULT_PHRASES = {
   grumble: ['Работа-работа...', 'Зуг-зуг...', 'Моя скучать без работы.', 'Эх, вкалывай тут...']
 };
 
-function peonHome() {
-  const cfg = vscode.workspace.getConfiguration('warcraftPeon');
-  const p = (cfg.get('peonHome') || '').trim();
-  return p ? p : path.join(os.homedir(), '.claude', 'peon');
+function slaveHome() {
+  const cfg = vscode.workspace.getConfiguration('warcraftSlave');
+  const p = (cfg.get('slaveHome') || '').trim();
+  return p ? p : path.join(os.homedir(), '.claude', 'slave');
 }
 
 function listAssets(kind, exts) {
-  const home = path.join(peonHome(), 'assets');
+  const home = path.join(slaveHome(), 'assets');
   for (const folder of FALLBACKS[kind] || [kind]) {
     const dir = path.join(home, folder);
     try {
@@ -49,7 +49,7 @@ function pickRandom(arr) {
 }
 
 function loadPhrases() {
-  const file = path.join(peonHome(), 'assets', 'phrases.json');
+  const file = path.join(slaveHome(), 'assets', 'phrases.json');
   try {
     const custom = JSON.parse(fs.readFileSync(file, 'utf8'));
     return Object.assign({}, DEFAULT_PHRASES, custom);
@@ -60,7 +60,7 @@ function loadPhrases() {
 
 // соответствие «файл звука → фраза в облачке» (для знаков вроде «?», запрещённых в именах файлов)
 function loadSoundmap() {
-  const file = path.join(peonHome(), 'assets', 'soundmap.json');
+  const file = path.join(slaveHome(), 'assets', 'soundmap.json');
   try {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (e) {
@@ -93,7 +93,7 @@ function playWav(file, onDone) {
   setTimeout(finish, 10000); // страховка, если процесс завис
 }
 
-class PeonViewProvider {
+class SlaveViewProvider {
   constructor(context) {
     this.context = context;
     this.view = null;
@@ -107,21 +107,21 @@ class PeonViewProvider {
   }
 
   get muted() {
-    return vscode.workspace.getConfiguration('warcraftPeon').get('muted');
+    return vscode.workspace.getConfiguration('warcraftSlave').get('muted');
   }
 
   get subtitlesOn() {
-    return vscode.workspace.getConfiguration('warcraftPeon').get('subtitles');
+    return vscode.workspace.getConfiguration('warcraftSlave').get('subtitles');
   }
 
   get reactionMs() {
-    const s = vscode.workspace.getConfiguration('warcraftPeon').get('reactionSeconds');
+    const s = vscode.workspace.getConfiguration('warcraftSlave').get('reactionSeconds');
     return Math.max(1, Number(s) || 6) * 1000;
   }
 
   resolveWebviewView(view) {
     this.view = view;
-    const assetsDir = path.join(peonHome(), 'assets');
+    const assetsDir = path.join(slaveHome(), 'assets');
     view.webview.options = {
       enableScripts: true,
       localResourceRoots: [
@@ -140,10 +140,10 @@ class PeonViewProvider {
         this.postState();
       }
       else if (msg.type === 'mute') {
-        vscode.workspace.getConfiguration('warcraftPeon').update('muted', !!msg.muted, true);
+        vscode.workspace.getConfiguration('warcraftSlave').update('muted', !!msg.muted, true);
       }
       else if (msg.type === 'subs') {
-        vscode.workspace.getConfiguration('warcraftPeon').update('subtitles', !!msg.on, true);
+        vscode.workspace.getConfiguration('warcraftSlave').update('subtitles', !!msg.on, true);
       }
     });
   }
@@ -237,7 +237,7 @@ class PeonViewProvider {
       this.playEvent('command');
       this.postState();
     } else if (ev === 'stop') {
-      // «Работа закончена» — только если пеон реально был занят.
+      // «Работа закончена» — только если раб реально был занят.
       // Шальной stop в простое (напр. от другой сессии) молчит.
       const wasWorking = this.working;
       this.working = false;
@@ -257,7 +257,7 @@ class PeonViewProvider {
   // страховка от зависшего «работает»: Stop мог не прийти (сессию закрыли, прервали)
   checkStuckWorking() {
     if (!this.working) return;
-    const cfg = vscode.workspace.getConfiguration('warcraftPeon');
+    const cfg = vscode.workspace.getConfiguration('warcraftSlave');
     const mins = Math.max(1, Number(cfg.get('workingTimeoutMinutes')) || 20);
     if (Date.now() - (this.workingSince || 0) > mins * 60 * 1000) {
       log('working ' + mins + ' мин без Stop — сбрасываю в покой');
@@ -267,7 +267,7 @@ class PeonViewProvider {
   }
 
   maybeGrumble() {
-    const cfg = vscode.workspace.getConfiguration('warcraftPeon');
+    const cfg = vscode.workspace.getConfiguration('warcraftSlave');
     if (!cfg.get('idleGrumble') || this.working) return;
     const minutes = Math.max(1, cfg.get('idleGrumbleMinutes') || 7);
     if (Date.now() - this.lastActivity < 3 * 60 * 1000) return; // не раньше 3 минут тишины
@@ -278,7 +278,7 @@ class PeonViewProvider {
 }
 
 function ensureEventsFile() {
-  const home = peonHome();
+  const home = slaveHome();
   const file = path.join(home, 'events.jsonl');
   try {
     fs.mkdirSync(home, { recursive: true });
@@ -288,20 +288,20 @@ function ensureEventsFile() {
 }
 
 function activate(context) {
-  logChannel = vscode.window.createOutputChannel('Peon');
+  logChannel = vscode.window.createOutputChannel('Slave');
   context.subscriptions.push(logChannel);
-  log('activated | home: ' + peonHome());
+  log('activated | home: ' + slaveHome());
 
   // прогрев аудио-стека (powershell + .NET + устройство), чтобы ПЕРВАЯ фраза
   // после открытия VS Code не обрезалась холодным стартом. primer.wav — тишина.
   try {
-    const primer = path.join(peonHome(), 'assets', 'primer.wav');
+    const primer = path.join(slaveHome(), 'assets', 'primer.wav');
     if (fs.existsSync(primer)) { log('audio prime'); playWav(primer); }
   } catch (e) { /* ignore */ }
 
-  const provider = new PeonViewProvider(context);
+  const provider = new SlaveViewProvider(context);
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider('warcraftPeon.view', provider, {
+    vscode.window.registerWebviewViewProvider('warcraftSlave.view', provider, {
       webviewOptions: { retainContextWhenHidden: true }
     })
   );
@@ -337,9 +337,9 @@ function activate(context) {
   context.subscriptions.push({ dispose: () => clearInterval(grumbleTimer) });
 
   // при первом запуске после установки — показать панель, дальше не навязываемся
-  if (!context.globalState.get('peonRevealed')) {
-    context.globalState.update('peonRevealed', true);
-    vscode.commands.executeCommand('warcraftPeon.view.focus').then(undefined, () => {});
+  if (!context.globalState.get('slaveRevealed')) {
+    context.globalState.update('slaveRevealed', true);
+    vscode.commands.executeCommand('warcraftSlave.view.focus').then(undefined, () => {});
   }
 }
 
@@ -467,7 +467,7 @@ function getHtml(webview) {
     <video id="clip" muted playsinline></video>
   </div>
   <div id="status"></div>
-  <div id="empty">Нет ассетов — закинь файлы в ~/.claude/peon/assets</div>
+  <div id="empty">Нет ассетов — закинь файлы в ~/.claude/slave/assets</div>
 
 <script nonce="${nonce}">
   const vscode = acquireVsCodeApi();

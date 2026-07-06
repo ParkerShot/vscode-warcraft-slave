@@ -1,16 +1,16 @@
-# Warcraft Peon for Claude Code
+# Warcraft Slave for Claude Code
 
-Пеон (Slave) из Warcraft III живёт в панели VS Code и реагирует на работу Claude Code: проговаривает фирменные фразы, когда ты отправляешь команду и когда задача выполнена, огрызается, если по нему кликнуть.
+Раб (Slave) из Warcraft III живёт в панели VS Code и реагирует на работу Claude Code: проговаривает фирменные фразы, когда ты отправляешь команду и когда задача выполнена, огрызается, если по нему кликнуть.
 
-> Peon from Warcraft III lives in a VS Code panel and reacts to Claude Code: he speaks his signature lines when you send a command and when the task is done, and grumbles when clicked.
+> A Warcraft III worker lives in a VS Code panel and reacts to Claude Code: he speaks his signature lines when you send a command and when the task is done, and grumbles when clicked.
 
 ---
 
 ## ⚠️ Дисклеймер / Disclaimer
 
-**RU:** Это некоммерческий фан-проект, никак не связанный с Blizzard Entertainment. Голосовые реплики, портрет и анимация пеона — собственность **Blizzard Entertainment** (Warcraft III). Эти ассеты **НЕ входят** в репозиторий и здесь не распространяются — код и озвучка разделены намеренно. Чтобы услышать пеона, подставь свои файлы (см. [Ассеты](#ассеты)). Проект ничего не продаёт и сделан для личного использования.
+**RU:** Это некоммерческий фан-проект, никак не связанный с Blizzard Entertainment. Голосовые реплики, портрет и анимация — собственность **Blizzard Entertainment** (Warcraft III). Эти ассеты **НЕ входят** в репозиторий и здесь не распространяются — код и озвучка разделены намеренно. Чтобы услышать звук, подставь свои файлы (см. [Ассеты](#ассеты)). Проект ничего не продаёт и сделан для личного использования.
 
-**EN:** This is a non-commercial fan project, not affiliated with or endorsed by Blizzard Entertainment. The peon's voice lines, portrait and animation are the property of **Blizzard Entertainment** (Warcraft III). Those assets are **NOT included** in this repository and are not distributed here — code and audio are deliberately kept separate. To hear the peon, supply your own files (see [Assets](#ассеты)). Nothing is sold; this is for personal use only.
+**EN:** This is a non-commercial fan project, not affiliated with or endorsed by Blizzard Entertainment. The voice lines, portrait and animation are the property of **Blizzard Entertainment** (Warcraft III). Those assets are **NOT included** in this repository and are not distributed here — code and audio are deliberately kept separate. To hear sound, supply your own files (see [Assets](#ассеты)). Nothing is sold; this is for personal use only.
 
 The MIT license in [LICENSE](LICENSE) covers **only the source code**, not any Blizzard assets.
 
@@ -18,11 +18,11 @@ The MIT license in [LICENSE](LICENSE) covers **only the source code**, not any B
 
 ## Что он делает
 
-- **Отправил команду** Claude Code → пеон проговаривает фразу («Готов вкалывать», «Сделаю», «Угу»…) + облачко с текстом
+- **Отправил команду** Claude Code → раб проговаривает фразу («Готов вкалывать», «Сделаю», «Угу»…) + облачко с текстом
 - **Пока Claude думает** → спокойный портрет с лёгким покачиванием и «⚒ работает»
 - **Задача выполнена** → «Работа закончена!»
 - **Нужно твоё внимание** (запрос прав) → молча показывает облачко, без звука
-- **Клик по пеону** → огрызается («Не мешай, я занят», «Нет времени»…)
+- **Клик по нему** → огрызается («Не мешай, я занят», «Нет времени»…)
 
 Говорящая анимация играет **только пока звучит фраза** — договорил, вернулся к портрету.
 
@@ -31,9 +31,9 @@ The MIT license in [LICENSE](LICENSE) covers **only the source code**, not any B
 ## Как это работает
 
 ```
-Claude Code ──hook──> ~/.claude/peon/peon-event.cmd ──append──> events.jsonl
-                                                                     │
-VS Code extension (warcraft-peon) ──watches the file───────────────┘
+Claude Code ──hook──> ~/.claude/slave/slave-event.cmd ──append──> events.jsonl
+                                                                       │
+VS Code extension (warcraft-slave) ──watches the file────────────────┘
         ├─ показывает анимацию/портрет в webview-панели «Slave»
         └─ играет .wav через PowerShell SoundPlayer (звук идёт, даже если панель скрыта)
 ```
@@ -45,30 +45,30 @@ VS Code extension (warcraft-peon) ──watches the file────────
 Требуется Windows + VS Code + Claude Code.
 
 ```powershell
-git clone https://github.com/ParkerShot/vscode-warcraft-peon.git
-cd vscode-warcraft-peon
+git clone https://github.com/ParkerShot/vscode-warcraft-slave.git
+cd vscode-warcraft-slave
 powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
 `setup.ps1` идемпотентен (можно запускать повторно) и:
 1. ставит расширение в `%USERPROFILE%\.vscode\extensions`
-2. создаёт «дом» пеона `%USERPROFILE%\.claude\peon` (`events.jsonl`, `peon-event.cmd`, `assets\`)
+2. создаёт «дом» `%USERPROFILE%\.claude\slave` (`events.jsonl`, `slave-event.cmd`, `assets\`)
 3. дописывает хуки в `%USERPROFILE%\.claude\settings.json`, не трогая твои существующие
 
 Потом перезапусти VS Code (или `Developer: Reload Window`). Панель **«Slave»** появится внизу рядом с терминалом; её можно перетащить куда удобно.
 
-Альтернатива — поставить `.vsix` из [Releases](../../releases) вручную (`code --install-extension warcraft-peon-0.1.0.vsix`), затем всё равно запустить `setup.ps1` для дома пеона и хуков.
+Альтернатива — поставить `.vsix` из [Releases](../../releases) вручную (`code --install-extension warcraft-slave-0.1.0.vsix`), затем всё равно запустить `setup.ps1` для дома и хуков.
 
 ## Ассеты
 
-Ассеты Blizzard в комплект не входят (см. дисклеймер). Положи свои файлы в `%USERPROFILE%\.claude\peon\assets\<папка>`:
+Ассеты Blizzard в комплект не входят (см. дисклеймер). Положи свои файлы в `%USERPROFILE%\.claude\slave\assets\<папка>`:
 
 | Папка | Когда играет | Форматы |
 |---|---|---|
 | `command/` | отправил команду | `.wav` (звук) + `.gif` (анимация) |
 | `done/` | задача выполнена | то же |
 | `permission/` | нужно внимание (без звука) | `.wav` для облачка + `.gif` |
-| `annoyed/` | клик по пеону | то же |
+| `annoyed/` | клик по рабу | то же |
 | `idle/` | портрет в простое | `.png/.jpg` |
 
 - Файл выбирается случайно из папки; пустая папка → берётся из `command/`.
@@ -84,19 +84,19 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 
 | Настройка | По умолчанию | Что делает |
 |---|---|---|
-| `warcraftPeon.muted` | `false` | выключить звук |
-| `warcraftPeon.subtitles` | `true` | показывать облачко с текстом |
-| `warcraftPeon.reactionSeconds` | `6` | макс. длина говорящей анимации (страховка, обычно обрывается по концу звука) |
-| `warcraftPeon.workingTimeoutMinutes` | `20` | через сколько сбросить «работает», если `Stop` не пришёл |
-| `warcraftPeon.idleGrumble` | `false` | изредка бурчать в простое |
-| `warcraftPeon.peonHome` | `""` | своя папка вместо `~/.claude/peon` |
+| `warcraftSlave.muted` | `false` | выключить звук |
+| `warcraftSlave.subtitles` | `true` | показывать облачко с текстом |
+| `warcraftSlave.reactionSeconds` | `6` | макс. длина говорящей анимации (страховка, обычно обрывается по концу звука) |
+| `warcraftSlave.workingTimeoutMinutes` | `20` | через сколько сбросить «работает», если `Stop` не пришёл |
+| `warcraftSlave.idleGrumble` | `false` | изредка бурчать в простое |
+| `warcraftSlave.slaveHome` | `""` | своя папка вместо `~/.claude/slave` |
 
-Двойной клик по пеону — мгновенный сброс состояния «работает».
+Двойной клик — мгновенный сброс состояния «работает».
 
 ## Заметки
 
-- Хуки Claude Code глобальные — пеон реагирует на все твои сессии Claude Code.
-- Диагностика: панель **OUTPUT → канал «Peon»** — там видно каждое событие и запуск плеера.
+- Хуки Claude Code глобальные — раб реагирует на все твои сессии Claude Code.
+- Диагностика: панель **OUTPUT → канал «Slave»** — там видно каждое событие и запуск плеера.
 
 ## Credits
 
