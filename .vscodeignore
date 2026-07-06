@@ -1,0 +1,15 @@
+# что НЕ попадёт в .vsix
+assets/**
+**/*.wav
+**/*.mp3
+**/*.gif
+**/*.mp4
+**/*.webm
+**/*.png
+**/*.jpg
+**/*.jpeg
+!media/*.svg
+.gitignore
+.vscodeignore
+setup.ps1
+**/.git/**

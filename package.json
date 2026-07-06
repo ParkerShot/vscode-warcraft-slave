@@ -1,0 +1,87 @@
+{
+  "name": "warcraft-peon",
+  "displayName": "Warcraft Peon",
+  "description": "Пеон из Warcraft 3 реагирует на команды Claude Code: говорит фразы, работает, бурчит.",
+  "version": "0.1.0",
+  "publisher": "otsni",
+  "license": "MIT",
+  "author": "WebB0rn (ParkerShot)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ParkerShot/vscode-warcraft-peon"
+  },
+  "bugs": {
+    "url": "https://github.com/ParkerShot/vscode-warcraft-peon/issues"
+  },
+  "homepage": "https://github.com/ParkerShot/vscode-warcraft-peon#readme",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "warcraftPeon",
+          "title": "Slave",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "warcraftPeon": [
+        {
+          "type": "webview",
+          "id": "warcraftPeon.view",
+          "name": "Slave"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Warcraft Peon",
+      "properties": {
+        "warcraftPeon.peonHome": {
+          "type": "string",
+          "default": "",
+          "description": "Папка с events.jsonl и assets. Пусто = ~/.claude/peon"
+        },
+        "warcraftPeon.muted": {
+          "type": "boolean",
+          "default": false,
+          "description": "Выключить звук"
+        },
+        "warcraftPeon.subtitles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Показывать фразы в облачке"
+        },
+        "warcraftPeon.workingTimeoutMinutes": {
+          "type": "number",
+          "default": 20,
+          "description": "Через сколько минут без событий сбросить состояние «работает» (если Stop не пришёл)"
+        },
+        "warcraftPeon.reactionSeconds": {
+          "type": "number",
+          "default": 6,
+          "description": "Сколько секунд играть анимацию-реакцию, прежде чем вернуться к статичному портрету"
+        },
+        "warcraftPeon.idleGrumble": {
+          "type": "boolean",
+          "default": false,
+          "description": "Иногда бурчать в простое"
+        },
+        "warcraftPeon.idleGrumbleMinutes": {
+          "type": "number",
+          "default": 7,
+          "description": "Примерно раз в сколько минут бурчать в простое"
+        }
+      }
+    }
+  }
+}
