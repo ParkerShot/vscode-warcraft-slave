@@ -7,7 +7,7 @@
     3. Appends hooks to %USERPROFILE%\.claude\settings.json without touching existing ones
 
   Run:  powershell -ExecutionPolicy Bypass -File setup.ps1
-  Blizzard assets are NOT bundled - drop your own .wav/.gif/.png into assets\ (see README).
+  Game assets are NOT bundled - drop your own .wav/.gif/.png into assets\ (see README).
 #>
 
 $ErrorActionPreference = 'Stop'
