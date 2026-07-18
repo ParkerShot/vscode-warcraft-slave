@@ -9,6 +9,7 @@ assets/**
 **/*.jpg
 **/*.jpeg
 !media/*.svg
+!media/icon.png
 .gitignore
 .vscodeignore
 setup.ps1

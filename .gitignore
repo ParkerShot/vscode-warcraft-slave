@@ -11,6 +11,7 @@ assets/
 *.jpeg
 # кроме иконки расширения
 !media/*.svg
+!media/icon.png
 
 # сборка / служебное
 *.vsix

@@ -34,9 +34,15 @@ foreach ($d in 'command','done','permission','annoyed','idle','thinking') {
 }
 $events = Join-Path $slave 'events.jsonl'
 if (-not (Test-Path $events)) { New-Item -ItemType File -Path $events | Out-Null }
-# event writer (called by hooks): appends {"event":"<arg>"} to events.jsonl
-$cmd = '@echo {"event":"%~1"}>>"%~dp0events.jsonl"' + "`r`n"
-Set-Content -Path (Join-Path $slave 'slave-event.cmd') -Value $cmd -Encoding ASCII -NoNewline
+# event writer (called by hooks): appends {"event":"<arg>"} to events.jsonl,
+# but ONLY when Claude Code runs in VS Code. Skips the Claude desktop app so the
+# slave doesn't talk while you use Claude Code inside the desktop app.
+$cmd = @(
+  '@echo off',
+  'if /I "%CLAUDE_CODE_ENTRYPOINT%"=="claude-desktop" exit /b 0',
+  'echo {"event":"%~1"}>>"%~dp0events.jsonl"'
+) -join "`r`n"
+Set-Content -Path (Join-Path $slave 'slave-event.cmd') -Value $cmd -Encoding ASCII
 # if an assets\ folder sits next to setup.ps1, copy it into the slave home
 $srcAssets = Join-Path $src 'assets'
 if (Test-Path $srcAssets) {

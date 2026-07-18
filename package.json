@@ -20,6 +20,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "media/icon.png",
   "main": "./extension.js",
   "activationEvents": [
     "onStartupFinished"
