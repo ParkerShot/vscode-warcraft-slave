@@ -1,19 +1,19 @@
 {
-  "name": "warcraft-slave",
-  "displayName": "Warcraft Slave",
-  "description": "Раб из Warcraft 3 реагирует на команды Claude Code: говорит фразы, работает, бурчит.",
+  "name": "w-claude-slave",
+  "displayName": "W_Claude_Slave",
+  "description": "A Warcraft grunt lives in VS Code and does Claude Code's dirty work — 'Work, work!' when you send a command, 'Job's done!' at the end, and mutters if you poke him. Zug zug.",
   "version": "0.1.0",
-  "publisher": "otsni",
+  "publisher": "ParkerShot",
   "license": "MIT",
   "author": "WebB0rn (ParkerShot)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ParkerShot/vscode-warcraft-slave"
+    "url": "https://github.com/ParkerShot/W_Claude_Slave"
   },
   "bugs": {
-    "url": "https://github.com/ParkerShot/vscode-warcraft-slave/issues"
+    "url": "https://github.com/ParkerShot/W_Claude_Slave/issues"
   },
-  "homepage": "https://github.com/ParkerShot/vscode-warcraft-slave#readme",
+  "homepage": "https://github.com/ParkerShot/W_Claude_Slave#readme",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -29,55 +29,55 @@
     "viewsContainers": {
       "panel": [
         {
-          "id": "warcraftSlave",
-          "title": "Slave",
+          "id": "wClaudeSlave",
+          "title": "W_Claude_Slave",
           "icon": "media/icon.svg"
         }
       ]
     },
     "views": {
-      "warcraftSlave": [
+      "wClaudeSlave": [
         {
           "type": "webview",
-          "id": "warcraftSlave.view",
-          "name": "Slave"
+          "id": "wClaudeSlave.view",
+          "name": "W_Claude_Slave"
         }
       ]
     },
     "configuration": {
-      "title": "Warcraft Slave",
+      "title": "W_Claude_Slave",
       "properties": {
-        "warcraftSlave.slaveHome": {
+        "wClaudeSlave.slaveHome": {
           "type": "string",
           "default": "",
-          "description": "Папка с events.jsonl и assets. Пусто = ~/.claude/slave"
+          "description": "Папка с events.jsonl и assets. Пусто = ~/.claude/w-claude-slave"
         },
-        "warcraftSlave.muted": {
+        "wClaudeSlave.muted": {
           "type": "boolean",
           "default": false,
           "description": "Выключить звук"
         },
-        "warcraftSlave.subtitles": {
+        "wClaudeSlave.subtitles": {
           "type": "boolean",
           "default": true,
           "description": "Показывать фразы в облачке"
         },
-        "warcraftSlave.workingTimeoutMinutes": {
+        "wClaudeSlave.workingTimeoutMinutes": {
           "type": "number",
           "default": 20,
           "description": "Через сколько минут без событий сбросить состояние «работает» (если Stop не пришёл)"
         },
-        "warcraftSlave.reactionSeconds": {
+        "wClaudeSlave.reactionSeconds": {
           "type": "number",
           "default": 6,
           "description": "Сколько секунд играть анимацию-реакцию, прежде чем вернуться к статичному портрету"
         },
-        "warcraftSlave.idleGrumble": {
+        "wClaudeSlave.idleGrumble": {
           "type": "boolean",
           "default": false,
           "description": "Иногда бурчать в простое"
         },
-        "warcraftSlave.idleGrumbleMinutes": {
+        "wClaudeSlave.idleGrumbleMinutes": {
           "type": "number",
           "default": 7,
           "description": "Примерно раз в сколько минут бурчать в простое"

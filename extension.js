@@ -27,9 +27,9 @@ const DEFAULT_PHRASES = {
 };
 
 function slaveHome() {
-  const cfg = vscode.workspace.getConfiguration('warcraftSlave');
+  const cfg = vscode.workspace.getConfiguration('wClaudeSlave');
   const p = (cfg.get('slaveHome') || '').trim();
-  return p ? p : path.join(os.homedir(), '.claude', 'slave');
+  return p ? p : path.join(os.homedir(), '.claude', 'w-claude-slave');
 }
 
 function listAssets(kind, exts) {
@@ -107,15 +107,15 @@ class SlaveViewProvider {
   }
 
   get muted() {
-    return vscode.workspace.getConfiguration('warcraftSlave').get('muted');
+    return vscode.workspace.getConfiguration('wClaudeSlave').get('muted');
   }
 
   get subtitlesOn() {
-    return vscode.workspace.getConfiguration('warcraftSlave').get('subtitles');
+    return vscode.workspace.getConfiguration('wClaudeSlave').get('subtitles');
   }
 
   get reactionMs() {
-    const s = vscode.workspace.getConfiguration('warcraftSlave').get('reactionSeconds');
+    const s = vscode.workspace.getConfiguration('wClaudeSlave').get('reactionSeconds');
     return Math.max(1, Number(s) || 6) * 1000;
   }
 
@@ -140,10 +140,10 @@ class SlaveViewProvider {
         this.postState();
       }
       else if (msg.type === 'mute') {
-        vscode.workspace.getConfiguration('warcraftSlave').update('muted', !!msg.muted, true);
+        vscode.workspace.getConfiguration('wClaudeSlave').update('muted', !!msg.muted, true);
       }
       else if (msg.type === 'subs') {
-        vscode.workspace.getConfiguration('warcraftSlave').update('subtitles', !!msg.on, true);
+        vscode.workspace.getConfiguration('wClaudeSlave').update('subtitles', !!msg.on, true);
       }
     });
   }
@@ -257,7 +257,7 @@ class SlaveViewProvider {
   // страховка от зависшего «работает»: Stop мог не прийти (сессию закрыли, прервали)
   checkStuckWorking() {
     if (!this.working) return;
-    const cfg = vscode.workspace.getConfiguration('warcraftSlave');
+    const cfg = vscode.workspace.getConfiguration('wClaudeSlave');
     const mins = Math.max(1, Number(cfg.get('workingTimeoutMinutes')) || 20);
     if (Date.now() - (this.workingSince || 0) > mins * 60 * 1000) {
       log('working ' + mins + ' мин без Stop — сбрасываю в покой');
@@ -267,7 +267,7 @@ class SlaveViewProvider {
   }
 
   maybeGrumble() {
-    const cfg = vscode.workspace.getConfiguration('warcraftSlave');
+    const cfg = vscode.workspace.getConfiguration('wClaudeSlave');
     if (!cfg.get('idleGrumble') || this.working) return;
     const minutes = Math.max(1, cfg.get('idleGrumbleMinutes') || 7);
     if (Date.now() - this.lastActivity < 3 * 60 * 1000) return; // не раньше 3 минут тишины
@@ -288,7 +288,7 @@ function ensureEventsFile() {
 }
 
 function activate(context) {
-  logChannel = vscode.window.createOutputChannel('Slave');
+  logChannel = vscode.window.createOutputChannel('W_Claude_Slave');
   context.subscriptions.push(logChannel);
   log('activated | home: ' + slaveHome());
 
@@ -301,7 +301,7 @@ function activate(context) {
 
   const provider = new SlaveViewProvider(context);
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider('warcraftSlave.view', provider, {
+    vscode.window.registerWebviewViewProvider('wClaudeSlave.view', provider, {
       webviewOptions: { retainContextWhenHidden: true }
     })
   );
@@ -339,7 +339,7 @@ function activate(context) {
   // при первом запуске после установки — показать панель, дальше не навязываемся
   if (!context.globalState.get('slaveRevealed')) {
     context.globalState.update('slaveRevealed', true);
-    vscode.commands.executeCommand('warcraftSlave.view.focus').then(undefined, () => {});
+    vscode.commands.executeCommand('wClaudeSlave.view.focus').then(undefined, () => {});
   }
 }
 
@@ -467,7 +467,7 @@ function getHtml(webview) {
     <video id="clip" muted playsinline></video>
   </div>
   <div id="status"></div>
-  <div id="empty">Нет ассетов — закинь файлы в ~/.claude/slave/assets</div>
+  <div id="empty">Нет ассетов — закинь файлы в ~/.claude/w-claude-slave/assets</div>
 
 <script nonce="${nonce}">
   const vscode = acquireVsCodeApi();

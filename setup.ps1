@@ -1,9 +1,9 @@
 <#
-  Warcraft Slave - installer for Claude Code + VS Code (Windows).
+  W_Claude_Slave - installer for Claude Code + VS Code (Windows).
 
   What it does (idempotent, safe to re-run):
     1. Installs the extension into %USERPROFILE%\.vscode\extensions
-    2. Creates the slave "home" %USERPROFILE%\.claude\slave (events.jsonl, slave-event.cmd, assets\)
+    2. Creates the home %USERPROFILE%\.claude\w-claude-slave (events.jsonl, slave-event.cmd, assets\)
     3. Appends hooks to %USERPROFILE%\.claude\settings.json without touching existing ones
 
   Run:  powershell -ExecutionPolicy Bypass -File setup.ps1
@@ -13,18 +13,19 @@
 $ErrorActionPreference = 'Stop'
 $src   = $PSScriptRoot
 $home_ = $env:USERPROFILE
-$extId = 'otsni.warcraft-slave-0.1.0'
+$extId = 'ParkerShot.w-claude-slave-0.1.0'
 $extDir = Join-Path $home_ ".vscode\extensions\$extId"
-$slave  = Join-Path $home_ ".claude\slave"
+$slave  = Join-Path $home_ ".claude\w-claude-slave"
 $settings = Join-Path $home_ ".claude\settings.json"
 
-Write-Host "== Warcraft Slave setup ==" -ForegroundColor Cyan
+Write-Host "== W_Claude_Slave setup ==" -ForegroundColor Cyan
 
 # 1. Extension
 New-Item -ItemType Directory -Force -Path $extDir | Out-Null
 Copy-Item (Join-Path $src 'extension.js') $extDir -Force
 Copy-Item (Join-Path $src 'package.json') $extDir -Force
 Copy-Item (Join-Path $src 'media') $extDir -Recurse -Force
+if (Test-Path (Join-Path $src 'README.md')) { Copy-Item (Join-Path $src 'README.md') $extDir -Force }
 Write-Host "[1/3] extension -> $extDir"
 
 # 2. Slave home
@@ -100,4 +101,4 @@ Write-Host "[3/3] hooks in settings.json (new events added: $added)"
 
 Write-Host ""
 Write-Host "Done. Restart VS Code (or Developer: Reload Window)." -ForegroundColor Green
-Write-Host "The panel shows up at the bottom next to the terminal - tab 'Slave'."
+Write-Host "The panel shows up at the bottom next to the terminal - tab 'W_Claude_Slave'."
