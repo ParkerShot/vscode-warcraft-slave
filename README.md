@@ -72,6 +72,49 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 
 Альтернатива — поставить `.vsix` из [Releases](../../releases) вручную (`code --install-extension warcraft-slave-0.1.0.vsix`), затем всё равно запустить `setup.ps1` для дома и хуков.
 
+### Вручную, без скрипта
+
+Если не хочешь запускать `.ps1` — можно сделать всё руками. `setup.ps1` просто автоматизирует эти же 4 шага. Ниже `<ПРОФИЛЬ>` = твой профиль, напр. `C:\Users\Ivan`.
+
+**1. Поставь расширение.** В VS Code: вкладка **Extensions** → кнопка «**…**» вверху → **Install from VSIX…** → выбери `warcraft-slave-0.1.0.vsix` (из [Releases](../../releases) или из бандла).
+
+**2. Положи ассеты.** Создай папку `<ПРОФИЛЬ>\.claude\slave\assets\` и внутри — папки `command`, `done`, `permission`, `annoyed`, `idle`. Разложи туда свои `.wav`/`.gif`/`.png` (см. [Ассеты](#ассеты)). Из бандла — просто скопируй готовую папку `assets`.
+
+**3. Создай писалку событий.** Файл `<ПРОФИЛЬ>\.claude\slave\slave-event.cmd` с содержимым:
+
+```bat
+@echo off
+if /I "%CLAUDE_CODE_ENTRYPOINT%"=="claude-desktop" exit /b 0
+echo {"event":"%~1"}>>"%~dp0events.jsonl"
+```
+
+(вторая строка = озвучивать только из VS Code, а не из десктоп-приложения Claude)
+
+**4. Пропиши хуки.** Открой `<ПРОФИЛЬ>\.claude\settings.json` и добавь эти 4 хука в объект `"hooks"` (если файла/объекта нет — создай; если хуки уже есть — просто допиши эти рядом). Путь в `args` замени на свой полный:
+
+```json
+"UserPromptSubmit": [
+  { "matcher": "", "hooks": [ { "type": "command", "command": "cmd.exe",
+    "args": ["/c", "C:\\Users\\ИМЯ\\.claude\\slave\\slave-event.cmd", "prompt"], "async": true, "timeout": 10 } ] }
+],
+"Stop": [
+  { "matcher": "", "hooks": [ { "type": "command", "command": "cmd.exe",
+    "args": ["/c", "C:\\Users\\ИМЯ\\.claude\\slave\\slave-event.cmd", "stop"], "async": true, "timeout": 10 } ] }
+],
+"Notification": [
+  { "matcher": "", "hooks": [ { "type": "command", "command": "cmd.exe",
+    "args": ["/c", "C:\\Users\\ИМЯ\\.claude\\slave\\slave-event.cmd", "notify"], "async": true, "timeout": 10 } ] }
+],
+"SessionEnd": [
+  { "matcher": "", "hooks": [ { "type": "command", "command": "cmd.exe",
+    "args": ["/c", "C:\\Users\\ИМЯ\\.claude\\slave\\slave-event.cmd", "end"], "async": true, "timeout": 10 } ] }
+]
+```
+
+**5.** Перезапусти VS Code (`Developer: Reload Window`).
+
+> JSON чувствителен к запятым — лишняя/пропущенная сломает файл. Если не уверен — проще `setup.ps1`.
+
 ## Ассеты
 
 Игровые ассеты в комплект репозитория не входят (см. дисклеймер). Положи свои файлы в `%USERPROFILE%\.claude\slave\assets\<папка>`:
